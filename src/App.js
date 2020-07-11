@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { data } from './assets/data'
+import List from './components/List'
 
 function App() {
+
+  const allItems = data.shop.categories.map((item, index) => {
+    return {
+      ...item,
+      active: false,
+      counter: 0,
+      index: index
+    }
+  })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <List data={allItems}/>
     </div>
-  );
+  )
 }
 
 export default App;
