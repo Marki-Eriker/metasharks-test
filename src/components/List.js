@@ -8,24 +8,30 @@ const List = ({data}) => {
   const [currentItems, setCurrentItems] = useState(allItems.filter(item => item.parent === '0'))
 
   const saveSelected = (prevItemIndex, index, newAllItems) => {
-    newAllItems[prevItemIndex].counter += 1
-    newAllItems[prevItemIndex].active = true
-    newAllItems[index].active = true
-    setAllItems([...newAllItems])
 
-    if (newAllItems[prevItemIndex].parent !== '0') {
-      const index = prevItemIndex
-      const newAllItems = allItems
-      const newPrevItemIndex = allItems.findIndex(item => item.id === allItems[index].parent)
+    if (prevItemIndex === -1) {
+      newAllItems[index].counter += 1
+      newAllItems[index].active = true
+      setAllItems([...newAllItems])
+    } else {
+      newAllItems[prevItemIndex].counter += 1
+      newAllItems[prevItemIndex].active = true
+      newAllItems[index].active = true
+      setAllItems([...newAllItems])
 
-      saveSelected(newPrevItemIndex, index, newAllItems)
+      if (newAllItems[prevItemIndex].parent !== '0') {
+        const index = prevItemIndex
+        const newAllItems = allItems
+        const newPrevItemIndex = allItems.findIndex(item => item.id === allItems[index].parent)
+
+        saveSelected(newPrevItemIndex, index, newAllItems)
+      }
     }
   }
 
   const onItemClick = (id, index, parent) => {
     const newItems = allItems.filter(item => item.parent === id)
     if (newItems.length > 0) {
-      console.log(allItems)
       setCurrentItems(newItems)
     } else {
       const prevItemIndex = allItems.findIndex(item => item.id === parent)
@@ -43,7 +49,6 @@ const List = ({data}) => {
   }
 
   const onResetClick = () => {
-    debugger
     const newAllItems = allItems.map(item => {
       item.counter = 0
       item.active = false
