@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import cn from 'classnames'
 import s from './List.module.scss'
 
@@ -10,7 +10,6 @@ const List = ({data}) => {
   const saveSelected = (prevItemIndex, index, newAllItems) => {
 
     if (prevItemIndex === -1) {
-      newAllItems[index].counter += 1
       newAllItems[index].active = true
       setAllItems([...newAllItems])
     } else {
@@ -43,7 +42,6 @@ const List = ({data}) => {
   const onBackClick = () => {
     if (currentItems[0].parent !== '0') {
       const item = allItems.find(item => item.id === currentItems[0].parent)
-      console.log(item)
       onItemClick(item.parent)
     }
   }
@@ -56,6 +54,18 @@ const List = ({data}) => {
     })
     setAllItems([...newAllItems])
   }
+
+  const getGoods = (id) => {
+    console.log('Выбранные id:', id)
+  }
+
+  useEffect(() => {
+    const id = allItems.filter(item => {
+      return item.active && !allItems.find(findItem => findItem.parent === item.id)
+    })
+    id[0] && getGoods(id.map(id => id.id))
+  },[allItems])
+
 
   return (
     <div className={s.listContainer}>
