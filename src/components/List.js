@@ -7,6 +7,27 @@ const List = ({data}) => {
   const [allItems, setAllItems] = useState([...data])
   const [currentItems, setCurrentItems] = useState(allItems.filter(item => item.parent === '0'))
 
+  const deleteSelected = (prevItemIndex, index, newAllItems) => {
+
+    if (prevItemIndex === -1) {
+      newAllItems[index].active = false
+      setAllItems([...newAllItems])
+    } else {
+      newAllItems[prevItemIndex].counter -= 1
+      newAllItems[prevItemIndex].active = newAllItems[prevItemIndex].counter > 0
+      newAllItems[index].active = newAllItems[index].counter > 0
+      setAllItems([...newAllItems])
+
+      if (newAllItems[prevItemIndex].parent !== '0') {
+        const index = prevItemIndex
+        const newAllItems = allItems
+        const newPrevItemIndex = allItems.findIndex(item => item.id === allItems[index].parent)
+        deleteSelected(newPrevItemIndex, index, newAllItems)
+      }
+    }
+
+  }
+
   const saveSelected = (prevItemIndex, index, newAllItems) => {
 
     if (prevItemIndex === -1) {
@@ -28,10 +49,14 @@ const List = ({data}) => {
     }
   }
 
-  const onItemClick = (id, index, parent) => {
+  const onItemClick = (id, index, parent, active) => {
     const newItems = allItems.filter(item => item.parent === id)
     if (newItems.length > 0) {
       setCurrentItems(newItems)
+    } else if (active) {
+      const prevItemIndex = allItems.findIndex(item => item.id === parent)
+      const newAllItems = [...allItems]
+      deleteSelected(prevItemIndex, index, newAllItems)
     } else {
       const prevItemIndex = allItems.findIndex(item => item.id === parent)
       const newAllItems = [...allItems]
@@ -77,7 +102,7 @@ const List = ({data}) => {
         {currentItems.map(item => (
           <li key={item.id}
               className={cn(s.listItem, item.active && s.listItemActive)}
-              onClick={() => onItemClick(item.id, item.index, item.parent)}
+              onClick={() => onItemClick(item.id, item.index, item.parent, item.active)}
           >
             {item.name}
             <span>{item.counter > 0 && `(${item.counter})`}</span>
