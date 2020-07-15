@@ -63,7 +63,7 @@ const List = ({data}) => {
     const id = allItems.filter(item => {
       return item.active && !allItems.find(findItem => findItem.parent === item.id)
     })
-    id[0] && getGoods(id.map(id => id.id))
+    id[0] ? getGoods(id.map(id => id.id)) : getGoods(allItems.map(id => id.id))
   },[allItems])
 
 
